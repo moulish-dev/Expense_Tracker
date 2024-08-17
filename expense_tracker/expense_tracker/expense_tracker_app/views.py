@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse, JsonResponse
 #to see that certain pages are only accessed by loginned users
 from django.contrib.auth.decorators import login_required
 #getting the Transaction Database from models.py
 from .models import Transaction
 
-from .forms import TransactionForm
+from .forms import TransactionForm, RegistrationForm
 
 #TRANSACTION FUNCTIONS START
 @login_required
@@ -23,8 +24,12 @@ def expense_list(request):
 @login_required
 def transactions_list(request):
     #shows all transactions
-    transactions = Transaction.objects.all().order_by('date')
-    return render(request, 'transactions/transaction_list.html',{'transactions': transactions})
+    user = request.user
+    transactions = Transaction.objects.filter(user=user).order_by('date')
+    print("Transactions:", transactions)
+    return render(request, 'transactions/transaction_list.html',{
+        'transactions': transactions,
+        'user_name': user.username})
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
@@ -40,18 +45,25 @@ def add_transaction(request):
 #USER AUTHENTICATION FUNCTIONS START
 def register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('transaction_list')
     else:
-        form = UserCreationForm()
+        form = RegistrationForm()
         return render(request, 'registration/register.html', {'form': form})
 
 def custom_login_view(request):
-    
-    return render(request, 'registration/login.html')
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('transaction_list')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {'form': form})
 
 def custom_logout_view(request):
     

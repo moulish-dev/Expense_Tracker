@@ -125,5 +125,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #to redirect users back to login page if user try to access protected view
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'login'
+LOGIN_REDIRECT_URL = 'transaction_list'
 LOGOUT_REDIRECT_URL = 'logout'

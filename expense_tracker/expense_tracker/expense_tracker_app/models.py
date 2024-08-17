@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Transaction(models.Model):
     #transaction type tuple to diffrentiate income and expense
@@ -6,7 +7,8 @@ class Transaction(models.Model):
         ('income','Income'),
         ('expense','Expense'),
     )
-
+    #to manage the users for each
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     #amount variable to store the expense and income
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     #type of the transaction determined from TRANSACTION_TYPES

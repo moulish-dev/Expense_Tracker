@@ -4,7 +4,9 @@
     <title>All Transactions</title>
 </head>
 <body>
-    <h1>All Transactions</h1>
+
+    <h1>All Transactions for {{ user_name }}</h1>
+    
     <table>
         <thead>
             <tr>
@@ -29,8 +31,8 @@
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'income_list' %}">Back to Income List</a>
-    <a href="{% url 'expense_list' %}">Back to Expense List</a>
-    <a href="{% url 'add_transaction' %}">Add New Transaction</a>
+    <button><a href="{% url 'income_list' %}">Back to Income List</a></button>
+    <button><a href="{% url 'expense_list' %}">Back to Expense List</a></button>
+    <button><a href="{% url 'add_transaction' %}">Add New Transaction</a></button>
 </body>
 </html>
