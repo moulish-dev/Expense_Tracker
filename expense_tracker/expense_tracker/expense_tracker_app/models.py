@@ -8,7 +8,7 @@ class Transaction(models.Model):
         ('expense','Expense'),
     )
     #to manage the users for each
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     #amount variable to store the expense and income
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     #type of the transaction determined from TRANSACTION_TYPES

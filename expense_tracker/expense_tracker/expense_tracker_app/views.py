@@ -13,20 +13,22 @@ from .forms import TransactionForm, RegistrationForm
 #TRANSACTION FUNCTIONS START
 @login_required
 def income_list(request):
+    user = request.user
     #filters transactions to show only income
-    incomes = Transaction.objects.filter(type='income')
+    incomes = Transaction.objects.filter(type='income', user=user).order_by('date')
     return render(request, 'transactions/income_list.html',{'transactions': incomes})
 @login_required
 def expense_list(request):
+    user = request.user
     #filters transactions to show only expenses
-    expenses = Transaction.objects.filter(type='expense')
+    expenses = Transaction.objects.filter(type='expense', user=user).order_by('date')
     return render(request, 'transactions/expense_list.html', {'transactions': expenses})
 @login_required
 def transactions_list(request):
     #shows all transactions
     user = request.user
     transactions = Transaction.objects.filter(user=user).order_by('date')
-    print("Transactions:", transactions)
+    
     return render(request, 'transactions/transaction_list.html',{
         'transactions': transactions,
         'user_name': user.username})
@@ -35,6 +37,9 @@ def add_transaction(request):
     if request.method == 'POST':
         form = TransactionForm(request.POST)
         if form.is_valid():
+            transaction = form.save(commit=False) #not to save to database yet
+            transaction.user = request.user #set the user 
+            transaction.save() #save to database
             form.save()
             return redirect('transaction_list')
     else:

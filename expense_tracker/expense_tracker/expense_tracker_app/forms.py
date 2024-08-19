@@ -7,6 +7,13 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model=Transaction
         fields = ['type','category','amount','date']
+    def save(self, commit=True, user=None):
+        transaction = super().save(commit=False)
+        if user:
+            transaction.user = user
+        if commit:
+            transaction.save()
+        return transaction
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(required=True)
