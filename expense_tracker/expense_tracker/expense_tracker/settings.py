@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_sass',
     'expense_tracker_app'
 ]
 
@@ -127,3 +129,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'transaction_list'
 LOGOUT_REDIRECT_URL = 'logout'
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'expense_tracker_app\static')]
+# For storing static files
+#STATICFILES_DIRS = [BASE_DIR / "/static/"]
+
+#for scss files in static folder
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'expense_tracker_app\static')
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+

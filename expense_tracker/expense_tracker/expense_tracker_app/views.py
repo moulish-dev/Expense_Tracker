@@ -10,6 +10,10 @@ from .models import Transaction
 
 from .forms import TransactionForm, RegistrationForm
 
+#HTML PAGES VIEW FUNCTIONS START
+def home(request):
+    return render(request, './home.html')
+#HTML PAGES VIEW FUNCTIONS END
 #TRANSACTION FUNCTIONS START
 @login_required
 def income_list(request):
