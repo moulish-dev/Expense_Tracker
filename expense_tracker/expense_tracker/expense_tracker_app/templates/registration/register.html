@@ -1,15 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Register</title>
+    <link rel="stylesheet" type='text/css' href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" type='text/css' href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <link rel="stylesheet" type='text/css' href="https://use.fontawesome.com/releases/v5.2.0/css/fontawesome.css">
+
 </head>
 <body>
-    <h2>Register</h2>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
-    </form>
-    <a href="{% url 'login' %}">Already have an account? Log in</a>
+    <div class="container">
+        <div class="screen">
+            <div class="screen__content">
+                <form class="register" method="POST">
+                    {% csrf_token %}
+                    {% comment %} Username Field {% endcomment %}
+                    <div class="register__field">
+                        <i class="register__icon fas fa-user"></i>
+                        <input type="text" class="register__input" 
+                        placeholder="Username" name="username" required>
+                    </div>
+                    {% comment %} Email Field {% endcomment %}
+                    <div class="register__field">
+                        <i class="register__icon fas fa-user"></i>
+                        <input type="email" class="register__input" 
+                        placeholder="Email Address" name="email" required>
+                    </div>
+                    {% comment %} Password1 Field {% endcomment %}
+                    <div class="register__field">
+                        <i class="register__icon fas fa-lock"></i>
+                        <input type="password" class="register__input" 
+                        placeholder="Password" name="password1" required>
+                    </div>
+                    {% comment %} Password2 Field {% endcomment %}
+                    <div class="register__field">
+                        <i class="register__icon fas fa-lock"></i>
+                        <input type="password" class="register__input" 
+                        placeholder="Re-enter Password" name="password2" required>
+                        
+                    </div>
+                    <button class="button register__submit" type="submit">
+                        <span class="button__text">Register</span>
+                        <i class="button__icon fas fa-chevron-right"></i>
+                    </button>				
+                </form>
+                <div class="social-register" onclick="window.location.href='{% url 'login' %}'">
+                    <h3>Login</h3>
+                    {% comment %} <div class="social-icons">
+                        <a href="#" class="social-register__icon fab fa-instagram"></a>
+                        <a href="#" class="social-register__icon fab fa-facebook"></a>
+                        <a href="#" class="social-register__icon fab fa-twitter"></a>
+                    </div> {% endcomment %}
+                </div>
+            </div>
+            <div class="screen__background">
+                <span class="screen__background__shape screen__background__shape4"></span>
+                <span class="screen__background__shape screen__background__shape3"></span>		
+                <span class="screen__background__shape screen__background__shape2"></span>
+                <span class="screen__background__shape screen__background__shape1"></span>
+            </div>		
+        </div>
+    </div>
 </body>
 </html>

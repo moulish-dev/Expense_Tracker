@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm  
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login as auth_login, authenticate
+from django.contrib.auth import get_user_model
 from django.http import HttpResponse, JsonResponse
 #to see that certain pages are only accessed by loginned users
 from django.contrib.auth.decorators import login_required
@@ -68,14 +70,31 @@ def register(request):
 
 def custom_login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            print("User successfully logged in. Redirecting to transaction_list.")
+        #extract username or email and password
+        username_or_email = request.POST.get('username', '')
+        password = request.POST.get('password','')
+        #get user model
+        User = get_user_model()
+        #check if input is email address
+        if '@' in username_or_email:
+            try:
+                #try to find user by email
+                user = User.objects.get(email=username_or_email)
+                #authenticate using username with the email
+                user = authenticate(username=user.username, password=password)
+            except User.DoesNotExist:
+                user=None
+        else:
+            #Authenticate using username
+            user = authenticate(username=username_or_email,password=password) 
+
+        
+        if user is not None:
+            auth_login(request, user)
             return redirect('transaction_list')
         else:
             print("Login failed. Re-rendering login form.")
+            form = AuthenticationForm()
             return render(request, 'registration/login.html', {'form': form})
     else:
         form = AuthenticationForm()
