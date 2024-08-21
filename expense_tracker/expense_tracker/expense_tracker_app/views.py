@@ -59,6 +59,8 @@ def register(request):
             user = form.save()
             login(request, user)
             return redirect('transaction_list')
+        else:
+            return render(request, 'registration/register.html', {'form': form})  # Re-render the form with errors
     else:
         form = RegistrationForm()
         return render(request, 'registration/register.html', {'form': form})
@@ -70,6 +72,8 @@ def custom_login_view(request):
             user = form.get_user()
             login(request, user)
             return redirect('transaction_list')
+        else:
+            return render(request, 'registration/login.html', {'form': form})
     else:
         form = AuthenticationForm()
     return render(request, 'registration/login.html', {'form': form})
