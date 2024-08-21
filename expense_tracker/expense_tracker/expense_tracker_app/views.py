@@ -12,6 +12,7 @@ from .forms import TransactionForm, RegistrationForm
 
 #HTML PAGES VIEW FUNCTIONS START
 def home(request):
+    
     return render(request, './home.html')
 #HTML PAGES VIEW FUNCTIONS END
 #TRANSACTION FUNCTIONS START
@@ -71,8 +72,10 @@ def custom_login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            print("User successfully logged in. Redirecting to transaction_list.")
             return redirect('transaction_list')
         else:
+            print("Login failed. Re-rendering login form.")
             return render(request, 'registration/login.html', {'form': form})
     else:
         form = AuthenticationForm()
