@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class TransactionForm(forms.ModelForm):
     class Meta:
         model=Transaction
-        fields = ['type','category','amount','date']
+        fields = ['type','category','amount','date', 'time', 'merchant', 'status','description','scheduled_date', 'scheduled_time']
     def save(self, commit=True, user=None):
         transaction = super().save(commit=False)
         if user:

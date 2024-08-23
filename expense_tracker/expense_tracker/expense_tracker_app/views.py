@@ -35,6 +35,18 @@ def transactions_list(request):
     #shows all transactions
     user = request.user
     transactions = Transaction.objects.filter(user=user).order_by('date')
+    for transaction in transactions: 
+            if transaction.type == 'income' or transaction.type == 'Income':
+                transaction.symbol = '+' 
+                transaction.image = 'https://cdn.pixabay.com/photo/2013/07/12/17/15/first-aid-151873_1280.png' 
+            elif transaction.type == 'expense' or transaction.type == 'Expense':
+                transaction.symbol = '-'
+                transaction.image = 'https://cdn.pixabay.com/photo/2016/06/01/17/04/minus-1429374_1280.png' 
+            else:
+                transaction.symbol = 'E'
+                transaction.image = ''
+    context = {'transactions': transactions}        
+
     
     return render(request, 'transactions/transaction_list.html',{
         'transactions': transactions,
@@ -108,6 +120,6 @@ def custom_logout_view(request):
 
 #USER PROFILE PAGE FUNCTIONS START
 @login_required
-def profile(request):
-    return render(request, 'registration/profile.html')
+def dashboard(request):
+    return render(request, 'transactions/dashboard.html')
 #USER PROFILE PAGE FUNCTIONS END

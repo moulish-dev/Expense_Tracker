@@ -7,6 +7,10 @@ class Transaction(models.Model):
         ('income','Income'),
         ('expense','Expense'),
     )
+    STATUS = (
+        ('completed','Completed'),
+        ('scheduled', 'Scheduled'),
+    )
     #to manage the users for each
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     #amount variable to store the expense and income
@@ -17,7 +21,12 @@ class Transaction(models.Model):
     category = models.CharField(max_length=50)
     #description of the transaction
     description = models.TextField(blank=True,null=True)
-    date = models.DateField()
+    date = models.DateField(blank=True,null=True)
+    time = models.TimeField(blank=True,null=True)
+    merchant = models.CharField(max_length=20,default='merchant')
+    status = models.CharField(max_length=9,choices=STATUS,default='completed')
+    scheduled_date = models.DateField(blank=True,null=True)
+    scheduled_time = models.TimeField(blank=True,null=True)
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.category}: ${self.amount}"
