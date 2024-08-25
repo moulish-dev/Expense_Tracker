@@ -25,8 +25,7 @@ class Transaction(models.Model):
     time = models.TimeField(blank=True,null=True)
     merchant = models.CharField(max_length=20,default='merchant')
     status = models.CharField(max_length=9,choices=STATUS,default='completed')
-    scheduled_date = models.DateField(blank=True,null=True)
-    scheduled_time = models.TimeField(blank=True,null=True)
+    
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.category}: ${self.amount}"
