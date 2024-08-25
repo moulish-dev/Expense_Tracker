@@ -192,19 +192,4 @@
 </html>
 
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Income List</title>
-</head>
-<body>
-    <h1>Income List</h1>
-    <ul>
-        {% for transaction in transactions %}
-            <li>{{ transaction.date }} - {{ transaction.category }}: ${{ transaction.amount }}</li>
-        {% empty %}
-            <li>No income records found.</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+
