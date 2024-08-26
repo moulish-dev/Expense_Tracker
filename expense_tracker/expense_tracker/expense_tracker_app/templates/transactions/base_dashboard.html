@@ -8,11 +8,14 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>{% block title %}  {% endblock %} </title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
-        
+        <style>
+        {% block css %}
+        {% endblock %}
+        </style>
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -49,9 +52,6 @@
                         <a href="{% url 'expense_list' %}">
                             Expenses
                         </a>
-                        <a href="#">
-                            Reports
-                        </a>
                     </div>
                 </div>
                 <div class="app-header-actions">
@@ -61,14 +61,7 @@
                             <img src="https://assets.codepen.io/285131/almeria-avatar.jpeg" />
                         </span>
                     </button>
-                    <div class="app-header-actions-buttons">
-                        <button class="icon-button large">
-                            <i class="ph-magnifying-glass"></i>
-                        </button>
-                        <button class="icon-button large">
-                            <i class="ph-bell"></i>
-                        </button>
-                    </div>
+                    
                 </div>
                 <div class="app-header-mobile">
                     <button class="icon-button large">
@@ -86,7 +79,7 @@
                             <i class="ph-browsers"></i>
                             <span>Dashboard</span>
                         </a>
-                        <a href="{% url 'dashboard' %}">
+                        <a href="{% url 'profile' %}">
                             <i class="ph-check-square"></i>
                             <span>Profile</span>
                         </a>

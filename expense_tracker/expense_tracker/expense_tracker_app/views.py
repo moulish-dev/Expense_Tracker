@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 #to see that certain pages are only accessed by loginned users
 from django.contrib.auth.decorators import login_required
 #getting the Transaction Database from models.py
-from .models import Transaction
+from .models import Transaction, User
 
 from .forms import TransactionForm, RegistrationForm
 
@@ -122,4 +122,16 @@ def custom_logout_view(request):
 @login_required
 def dashboard(request):
     return render(request, 'transactions/dashboard.html')
+
+@login_required
+def profile(request):
+
+    user=request.user
+    userEmail= user.email
+
+    return render(request, 'registration/profile.html', {
+        'user': user,
+        'email': userEmail,
+    })
+
 #USER PROFILE PAGE FUNCTIONS END

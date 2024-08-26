@@ -1,11 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Your Profile</title>
-</head>
-<body>
-    <h2>Welcome, {{ user.username }}!</h2>
-    <p>Email: {{ user.email }}</p>
-    <a href="{% url 'logout' %}">Logout</a>
-</body>
-</html>
+{% extends '../transactions/base_dashboard.html' %}
+
+{% block title %} Profile {% endblock %}
+{% block css %}
+
+
+
+{% endblock %}
+
+{% block content %}
+
+
+
+    <div class="">
+        <h2 style="display: inline-block; vertical-align: middle; margin-right: 1vw;">Name</h2> 
+        <h4 style="display: inline-block; vertical-align: middle; margin-right: 1vw;">{{ user }}</h4>
+        <p></p>
+        <h2 style="display: inline-block; vertical-align: middle; margin-right: 1vw;">Email Address</h2> 
+        <h4 style="display: inline-block; vertical-align: middle; margin-right: 1vw;">{{ email }}</h4>
+        <p></p>
+        <button><a href="{% url 'logout' %}" > Logout </a></button>
+    </div>
+    
+        
+    
+
+
+{% endblock %}
