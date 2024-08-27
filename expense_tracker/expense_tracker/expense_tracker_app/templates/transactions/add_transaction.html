@@ -73,6 +73,16 @@
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary mt-3">Submit </button>
                 </div>
+            </form>
+            
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <p>Accepts Llyods Bank Statement in excel and pdf format</p>
+                <div class="mb-3">
+                    <label for=""> Bank Statement </label>
+                    {{ bank_statement_form.as_p }}
+                </div>
+                <button type="submit">Upload</button>
             </form>`;
         }
     }
@@ -83,5 +93,7 @@
         document.getElementById('add-transaction-container').appendChild(new TransactionForm());
     });
 </script>
+
+
 
 {% endblock %}

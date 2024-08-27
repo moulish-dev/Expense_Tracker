@@ -18,7 +18,7 @@ class Transaction(models.Model):
     #type of the transaction determined from TRANSACTION_TYPES
     type = models.CharField(max_length=7,choices=TRANSACTION_TYPES)
     #category of the transaction like Food,Transport
-    category = models.CharField(max_length=50)
+    category = models.CharField(max_length=50,null=True)
     #description of the transaction
     description = models.TextField(blank=True,null=True)
     date = models.DateField(blank=True,null=True)
@@ -29,5 +29,10 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.get_type_display()} - {self.category}: ${self.amount}"
+
+class BankStatement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    file_bankstmt = models.FileField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
 

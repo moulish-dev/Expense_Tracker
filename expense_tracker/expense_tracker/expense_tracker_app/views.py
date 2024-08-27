@@ -10,7 +10,17 @@ from django.contrib.auth.decorators import login_required
 #getting the Transaction Database from models.py
 from .models import Transaction, User
 
-from .forms import TransactionForm, RegistrationForm
+from .forms import TransactionForm, RegistrationForm, BankStatementForm
+
+import pandas as pd #for excel files handling
+import pdfplumber #for pdf files handling
+import pathlib
+from pypdf import PdfReader
+import re #for regex text processing
+from datetime import datetime
+from django.core.exceptions import ValidationError
+from django.db.models import Q
+
 
 #HTML PAGES VIEW FUNCTIONS START
 def home(request):
@@ -22,13 +32,33 @@ def home(request):
 def income_list(request):
     user = request.user
     #filters transactions to show only income
-    incomes = Transaction.objects.filter(type='income', user=user).order_by('date')
+    incomes = Transaction.objects.filter(Q(type='income') | Q(type='Income'), user=user).order_by('date')
+    for transaction in incomes: 
+            if transaction.type == 'income' or transaction.type == 'Income':
+                transaction.symbol = '+' 
+                transaction.image = 'https://cdn.pixabay.com/photo/2013/07/12/17/15/first-aid-151873_1280.png' 
+            elif transaction.type == 'expense' or transaction.type == 'Expense':
+                transaction.symbol = '-'
+                transaction.image = 'https://cdn.pixabay.com/photo/2016/06/01/17/04/minus-1429374_1280.png' 
+            else:
+                transaction.symbol = 'E'
+                transaction.image = ''
     return render(request, 'transactions/income_list.html',{'transactions': incomes})
 @login_required
 def expense_list(request):
     user = request.user
     #filters transactions to show only expenses
-    expenses = Transaction.objects.filter(type='expense', user=user).order_by('date')
+    expenses = Transaction.objects.filter(Q(type='Expense') | Q(type='Expense'), user=user).order_by('date')
+    for transaction in expenses: 
+            if transaction.type == 'income' or transaction.type == 'Income':
+                transaction.symbol = '+' 
+                transaction.image = 'https://cdn.pixabay.com/photo/2013/07/12/17/15/first-aid-151873_1280.png' 
+            elif transaction.type == 'expense' or transaction.type == 'Expense':
+                transaction.symbol = '-'
+                transaction.image = 'https://cdn.pixabay.com/photo/2016/06/01/17/04/minus-1429374_1280.png' 
+            else:
+                transaction.symbol = 'E'
+                transaction.image = ''
     return render(request, 'transactions/expense_list.html', {'transactions': expenses})
 @login_required
 def transactions_list(request):
@@ -53,18 +83,186 @@ def transactions_list(request):
         'user_name': user.username})
 @login_required
 def add_transaction(request):
+    print('Add Transaction View Accessed')
     if request.method == 'POST':
-        form = TransactionForm(request.POST)
-        if form.is_valid():
-            transaction = form.save(commit=False) #not to save to database yet
+        print('POST Recieved')
+        Transactionform_data = TransactionForm(request.POST)
+        BankStatementform_data = BankStatementForm(request.POST, request.FILES)
+        if Transactionform_data.is_valid():
+            transaction = Transactionform_data.save(commit=False) #not to save to database yet
             transaction.user = request.user #set the user 
             transaction.save() #save to database
-            form.save()
+            Transactionform_data.save()
             return redirect('transaction_list')
+        
+        if BankStatementform_data.is_valid():
+            print('BankStatementValid Confirmed')
+            BankStmt = BankStatementform_data.save(commit=False)
+            BankStmt.user = request.user
+            BankStmt.save()
+            BankStmt_file = request.FILES["file_bankstmt"]
+            BankStmt_filename = BankStmt_file.name
+            file_ext = pathlib.Path(BankStmt_filename).suffix
+            #Extracting data from bank statement
+            #changing according to file
+            if file_ext == '.pdf':
+                print('Bank Statement pdf view accessed')
+                pdf_data_list = extract_transactions_from_pdf(request.FILES["file_bankstmt"])
+                request.session['statement_transactions'] = pdf_data_list
+                print(pdf_data_list)
+                return render(request, 'transactions/confirm_transactions.html',{'pdf_transactions': pdf_data_list})
+            elif file_ext == '.xlsx':
+                extract_transactions_from_xlsx(BankStmt.file) 
+                return redirect('transaction_list')
+        else:
+            print(BankStatementform_data.errors)
+            
     else:
-        form = TransactionForm()
-    return render(request, 'transactions/add_transaction.html', {'form': form})
+        Transactionform_data = TransactionForm()
+        BankStatementform_data = BankStatementForm()
+    return render(request, 'transactions/add_transaction.html', {
+        'transaction_form': Transactionform_data,
+        'bank_statement_form' : BankStatementform_data,
+        })
 #TRANSACTION FUNCTIONS END
+
+ 
+
+#BANK STATEMENT FILE HANDLING FUNCTIONS START
+
+def extract_transactions_from_pdf(pdf_file):
+    print('pdf view function accessed')
+    reader = PdfReader(pdf_file)
+    transactions = [] #for storing transactions
+    #printing No. Of Pages
+    print(len(reader.pages))
+    for page in reader.pages:
+        text = page.extract_text()
+        transaction_pattern = re.compile(
+             r'Date\n(\d{2} \w{3} \d{2})\.Description\n(.*?)\.Type\n(.*?)\.Money In \(\£\)\n(blank|\d+\.?\d*)\.Money Out \(\£\)\n(blank|\d+\.?\d*)\.Balance \(\£\)\n(\d+\.?\d*)\.',
+        re.DOTALL
+        )
+        matches = transaction_pattern.findall(text)
+        for match in matches:
+            date=match[0]
+            description=match[1]
+            trans_type=match[2]
+            money_in=match[3] if match[3] !='blank' else '0.0'
+            money_out=match[4] if match[4] !='blank' else '0.0'
+            balance=match[5]
+            #this checks the Money_in and Money_out value in the extracted
+            #text and set the transaction type as income and set the amount which is not null
+            #This is done as the form submit type is different and the user can see the format
+            if money_out == '0.0':
+                amount_type = 'Income'
+                amount = money_in
+                symbol = '+'
+            elif money_in == '0.0':
+                amount_type = 'Expense'
+                amount = money_out
+                symbol = '-'
+            else:
+                amount_type = 'error'
+                amount = 'error'
+                symbol ='e'
+            transactions.append({
+                'Date': date,
+                'Description': description,
+                'Type': amount_type,
+                'Amount': amount,
+                'Amount_symbol': symbol,
+                
+            })
+            
+                
+
+    return transactions
+    
+def remove_transactions(request):
+    if request.method == "POST":
+        transaction_index = int(request.POST.get('transaction_index', -1))
+        transactions = request.session.get('statement_transactions',[])
+        if 0<= transaction_index < len(transactions):
+            del transactions[transaction_index]
+            request.session['statement_transactions'] = transactions
+    return render(request, 'transactions/confirm_transactions.html',{'pdf_transactions': transactions})
+
+
+def add_statement_transaction(request):
+    if request.method == "POST":
+        transactions_data = request.session.get('statement_transactions',[])
+
+        for transactions in transactions_data:
+
+            date_str = transactions['Date']
+            try:
+                date_obj = datetime.strptime(date_str, '%d %b %y')
+                formatted_date = date_obj.strftime('%Y-%m-%d')
+            except ValueError as e:
+                raise ValidationError(f'Invalid date format: {date_str}. Expected format is DD MMM YY.')
+
+            Transaction.objects.create(
+                date = formatted_date,
+                merchant = transactions['Description'],
+                type = transactions['Type'],
+                amount = transactions['Amount'],
+                user = request.user,
+                status = "Completed",
+                category = 'category'
+            )
+        request.session['statement_transactions'] = []
+        return redirect('transaction_list')
+    return redirect('dashboard')
+
+
+
+
+def extract_transactions_from_xlsx(xlsx_file):
+    df = pd.read_excel(xlsx_file, skiprows=0) #using pandas to extract data
+
+    #filter invalid rows
+    df = df[df.apply(is_valid_transaction_row, axis=1)]
+
+    #intializing list to store transactions
+    transactions = []
+
+
+    for _, row in df.iterrows():
+        
+        date=row['Date']
+        merchant=row['Description']
+        money_in = row['Money In'] if not pd.isna(row['Money In']) else None
+        money_out = row['Money Out'] if not pd.isna(row['Money Out']) else None
+
+        #determine the type of transaction
+        if money_in:
+            transaction_type = 'Income'
+        elif money_out:
+            transaction_type = 'Expense'
+        else:
+            continue
+
+        
+        transactions.append({
+            'date' : date,
+            'merchant' : merchant,
+            'transaction_type' : transaction_type,
+            'amount' : money_in if transaction_type == 'Income' else money_out
+        })
+
+    print(transactions) #test
+
+    return transactions
+        
+
+def is_valid_transaction_row(row):
+    try:
+        pd.todatetime(row['Date'],format='%d/%m/%Y',errors='raise')
+        return True
+    except ValueError:
+        return False
+
+#BANK STATEMENT FILE HANDLING FUNCTIONS END
 
 #USER AUTHENTICATION FUNCTIONS START
 def register(request):
@@ -135,3 +333,4 @@ def profile(request):
     })
 
 #USER PROFILE PAGE FUNCTIONS END
+
