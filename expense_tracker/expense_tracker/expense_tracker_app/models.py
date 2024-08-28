@@ -35,4 +35,9 @@ class BankStatement(models.Model):
     file_bankstmt = models.FileField()
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+class Contact_Db(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=15,default='No Subject Provided')
+    message = models.CharField(max_length=200,default='No Message Provided')
+
 

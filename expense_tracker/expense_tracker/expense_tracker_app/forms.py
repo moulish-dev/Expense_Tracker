@@ -1,5 +1,5 @@
 from django import forms
-from .models import Transaction, BankStatement
+from .models import Transaction, BankStatement, Contact_Db
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -29,3 +29,7 @@ class BankStatementForm(forms.ModelForm):
         model=BankStatement
         fields=['file_bankstmt']
     
+class Contact_DbForm(forms.ModelForm):
+    class Meta:
+        model=Contact_Db
+        fields=['subject','message']

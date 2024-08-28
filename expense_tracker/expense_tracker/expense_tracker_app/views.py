@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 #getting the Transaction Database from models.py
 from .models import Transaction, User
 
-from .forms import TransactionForm, RegistrationForm, BankStatementForm
+from .forms import TransactionForm, RegistrationForm, BankStatementForm,Contact_DbForm
 
 import pandas as pd #for excel files handling
 import pdfplumber #for pdf files handling
@@ -331,6 +331,24 @@ def profile(request):
         'user': user,
         'email': userEmail,
     })
+
+@login_required
+def contactForm(request):
+    if request.method == "POST":
+        ContactFormData = Contact_DbForm(request.POST)
+        if ContactFormData.is_valid():
+            ContactForm = ContactFormData.save(commit=False)
+            ContactForm.user = request.user
+            ContactForm.save()
+            print('Contact Form Submitted')
+            return redirect('profile')
+        else:
+            return redirect('contact-form')
+    
+    return render(request, 'User/user_contactform.html')
+
+
+
 
 #USER PROFILE PAGE FUNCTIONS END
 

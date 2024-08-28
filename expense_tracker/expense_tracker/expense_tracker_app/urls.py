@@ -15,5 +15,6 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard' ),
     path('profile/', views.profile, name='profile'),
     path('remove_transaction/', views.remove_transactions , name='remove_transaction'),
-    path('add_statement_transaction/', views.add_statement_transaction, name='add_statement_transaction')    
+    path('add_statement_transaction/', views.add_statement_transaction, name='add_statement_transaction'),
+    path('contact-form/', views.contactForm, name='contact-form')    
 ]
