@@ -335,14 +335,17 @@ def profile(request):
 @login_required
 def contactForm(request):
     if request.method == "POST":
+        print('POST recieved')
         ContactFormData = Contact_DbForm(request.POST)
         if ContactFormData.is_valid():
+            print('post method tried valid')
             ContactForm = ContactFormData.save(commit=False)
             ContactForm.user = request.user
             ContactForm.save()
             print('Contact Form Submitted')
             return redirect('profile')
         else:
+            print('valid else tried')
             return redirect('contact-form')
     
     return render(request, 'User/user_contactform.html')
