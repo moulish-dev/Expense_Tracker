@@ -81,20 +81,15 @@ def transactions_list(request):
     return render(request, 'transactions/transaction_list.html',{
         'transactions': transactions,
         'user_name': user.username})
+
 @login_required
-def add_transaction(request):
+def add_statement(request):
     print('Add Transaction View Accessed')
     if request.method == 'POST':
         print('POST Recieved')
-        Transactionform_data = TransactionForm(request.POST)
-        BankStatementform_data = BankStatementForm(request.POST, request.FILES)
-        if Transactionform_data.is_valid():
-            transaction = Transactionform_data.save(commit=False) #not to save to database yet
-            transaction.user = request.user #set the user 
-            transaction.save() #save to database
-            Transactionform_data.save()
-            return redirect('transaction_list')
         
+        BankStatementform_data = BankStatementForm(request.POST, request.FILES)
+
         if BankStatementform_data.is_valid():
             print('BankStatementValid Confirmed')
             BankStmt = BankStatementform_data.save(commit=False)
@@ -118,12 +113,34 @@ def add_transaction(request):
             print(BankStatementform_data.errors)
             
     else:
-        Transactionform_data = TransactionForm()
+        print('else tried')
         BankStatementform_data = BankStatementForm()
-    return render(request, 'transactions/add_transaction.html', {
-        'transaction_form': Transactionform_data,
-        'bank_statement_form' : BankStatementform_data,
+    return render(request, 'transactions/add_statement_transaction.html', {
+        'bank_statement_form' : BankStatementform_data
         })
+
+@login_required
+def add_transaction(request):
+    print('Add Transaction View Accessed')
+    if request.method == 'POST':
+        print('POST Recieved')
+        Transactionform_data = TransactionForm(request.POST)
+        if Transactionform_data.is_valid():
+            print('transaction add valid tried')
+            transaction = Transactionform_data.save(commit=False) #not to save to database yet
+            transaction.user = request.user #set the user 
+            transaction.save() #save to database
+            Transactionform_data.save()
+            return redirect('transaction_list')
+        else:
+            print('valid else tried')
+            return redirect('add_transaction')
+            
+    else:
+        print('else tried')
+        Transactionform_data = TransactionForm()
+    return render(request, 'transactions/add_transaction.html', {
+        'transaction_form': Transactionform_data        })
 #TRANSACTION FUNCTIONS END
 
  
@@ -213,9 +230,6 @@ def add_statement_transaction(request):
         request.session['statement_transactions'] = []
         return redirect('transaction_list')
     return redirect('dashboard')
-
-
-
 
 def extract_transactions_from_xlsx(xlsx_file):
     df = pd.read_excel(xlsx_file, skiprows=0) #using pandas to extract data
