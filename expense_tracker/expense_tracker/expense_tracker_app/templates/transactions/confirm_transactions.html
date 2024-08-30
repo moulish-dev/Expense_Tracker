@@ -20,9 +20,12 @@
             </div>
         </div>
         <div class="transfers">
-            <form method="POST" action="{% url 'remove_transaction' %}">
-            {% csrf_token %}
+            
+            
+            
             {% for transaction in pdf_transactions %}
+            <form method="POST" action="{% url 'remove_transaction' %}">
+                {% csrf_token %}
             <div class="transfer">
                 <input type="hidden" value={{ forloop.counter0 }} name="transaction_index">
                 <div class="transfer-details">

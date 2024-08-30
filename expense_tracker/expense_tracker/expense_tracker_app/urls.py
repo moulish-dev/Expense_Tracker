@@ -17,5 +17,6 @@ urlpatterns = [
     path('remove_transaction/', views.remove_transactions , name='remove_transaction'),
     path('add_statement_transaction/', views.add_statement_transaction, name='add_statement_transaction'),
     path('contact-form/', views.contactForm, name='contact-form'),
-    path('add_statement/',views.add_statement, name='add_statement_form')    
-]
+    path('add_statement/',views.add_statement, name='add_statement_form'),
+    path('help/',views.user_help,name='help')
+    ]

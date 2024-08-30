@@ -1,0 +1,68 @@
+{% extends "../transactions/base_dashboard.html" %}
+
+{% block title %} Help Page {% endblock  %}
+
+{% block css %}
+
+h1{
+    font-size:1em;
+}
+
+p {
+    color: #f1f1f1;
+    font-size: 1.2em;
+    
+}
+code {
+    color: #969593;
+    font-size: 0.9em;
+    
+}
+
+
+
+{% endblock  %}
+
+{% block content %}
+<div class='transfer-section'>
+    <h2>Frequently Asked Questions (FAQ) Section</h2>
+<p>How do I create an account?</p>
+<p><code>To create an account, click on the "Sign Up" button on the homepage, <br> fill in your details, and confirm your email address.</code></p>
+
+<p>How do I add a new transaction?</p>
+<p><code>Navigate to the "Add Transaction" section, <br> enter the details of your expense or income, and click "Save."</code></p>
+
+<p>Can I edit or delete a transaction?</p>
+<p><code>Yes, go to your transaction history, <br>select the transaction you want to edit or delete, and choose the appropriate action.</code></p>
+
+<p>How do I generate a report of my expenses?</p>
+<p><code>Go to the "Reports" section, select the time frame, and type of report you want, <br> then click "Generate Report."</code></p>
+
+<p>What should I do if I forget my password?</p>
+<p><code>Click on the "Forgot Password" link on the login page, <br> enter your registered email address, and follow the instructions to reset your password.</code></p>
+
+<p>How can I set up a recurring transaction?</p>
+<p><code>When adding a new transaction, select the "Recurring" option and <br> specify the frequency (daily, weekly, monthly).</code></p>
+
+<p>Is my data secure?</p>
+<p><code>Yes, your data is protected with encryption and secure authentication protocols. <br> We also offer two-factor authentication for added security.</code></p>
+
+<p>Can I export my transactions to a spreadsheet?</p>
+<p><code>Yes, you can export your transactions as a CSV file from the "Reports" section.</code></p>
+
+<p>How do I contact support if I have an issue?</p>
+<p><code>You can reach our support team via the "Contact Us" form <br> available on the help page or by emailing us at support@example.com.</code></p>
+
+<p>How do I update my account information?</p>
+<p><code>Go to "Account Settings" and update your profile, email, <br> or password as needed.</code></p>
+
+</div>
+<div>
+    <h2> Submit your Feedback or  
+        <br> let us know any help you need 
+        <br>and we will be with you shortly </h2>
+    <button type="button" onclick="window.location.href='{% url "contact-form" %}'" > Contact Us </button>
+    
+</div>
+
+{% endblock  %}

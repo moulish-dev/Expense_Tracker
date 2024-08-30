@@ -134,7 +134,7 @@ def add_transaction(request):
             return redirect('transaction_list')
         else:
             print('valid else tried')
-            return redirect('add_transaction')
+            return redirect('')
             
     else:
         print('else tried')
@@ -217,14 +217,14 @@ def add_statement_transaction(request):
                 formatted_date = date_obj.strftime('%Y-%m-%d')
             except ValueError as e:
                 raise ValidationError(f'Invalid date format: {date_str}. Expected format is DD MMM YY.')
-
+            print(transactions)
             Transaction.objects.create(
                 date = formatted_date,
                 merchant = transactions['Description'],
                 type = transactions['Type'],
                 amount = transactions['Amount'],
                 user = request.user,
-                status = "Completed",
+                status = 'Completed',
                 category = 'category'
             )
         request.session['statement_transactions'] = []
@@ -333,7 +333,22 @@ def custom_logout_view(request):
 #USER PROFILE PAGE FUNCTIONS START
 @login_required
 def dashboard(request):
-    return render(request, 'transactions/dashboard.html')
+    user = request.user
+    transactions = Transaction.objects.filter(user=user).order_by('-date')
+    for transaction in transactions: 
+            if transaction.type == 'income' or transaction.type == 'Income':
+                transaction.symbol = '+' 
+                transaction.image = 'https://cdn.pixabay.com/photo/2013/07/12/17/15/first-aid-151873_1280.png' 
+            elif transaction.type == 'expense' or transaction.type == 'Expense':
+                transaction.symbol = '-'
+                transaction.image = 'https://cdn.pixabay.com/photo/2016/06/01/17/04/minus-1429374_1280.png' 
+            else:
+                transaction.symbol = 'E'
+                transaction.image = ''
+    transactions_slice = transactions[:3]
+    return render(request, 'transactions/dashboard.html',{
+        'transactions' : transactions_slice,
+    })
 
 @login_required
 def profile(request):
@@ -364,7 +379,8 @@ def contactForm(request):
     
     return render(request, 'User/user_contactform.html')
 
-
+def user_help(request):
+    return render(request, 'User/user_helppage.html')
 
 
 #USER PROFILE PAGE FUNCTIONS END
