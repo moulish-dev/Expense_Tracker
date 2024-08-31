@@ -335,19 +335,27 @@ def custom_logout_view(request):
 def dashboard(request):
     user = request.user
     transactions = Transaction.objects.filter(user=user).order_by('-date')
+    total_income = 0
+    total_expense = 0
     for transaction in transactions: 
             if transaction.type == 'income' or transaction.type == 'Income':
                 transaction.symbol = '+' 
                 transaction.image = 'https://cdn.pixabay.com/photo/2013/07/12/17/15/first-aid-151873_1280.png' 
+                total_income += transaction.amount
             elif transaction.type == 'expense' or transaction.type == 'Expense':
                 transaction.symbol = '-'
                 transaction.image = 'https://cdn.pixabay.com/photo/2016/06/01/17/04/minus-1429374_1280.png' 
+                total_expense += transaction.amount
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
     transactions_slice = transactions[:3]
+    total_balance = total_income - total_expense
     return render(request, 'transactions/dashboard.html',{
         'transactions' : transactions_slice,
+        'total_income': total_income,
+        'total_expense': total_expense,
+        'total_balance': total_balance,
     })
 
 @login_required
