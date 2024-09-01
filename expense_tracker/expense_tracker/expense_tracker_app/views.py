@@ -125,6 +125,7 @@ def add_transaction(request):
     if request.method == 'POST':
         print('POST Recieved')
         Transactionform_data = TransactionForm(request.POST)
+        print(Transactionform_data)
         if Transactionform_data.is_valid():
             print('transaction add valid tried')
             transaction = Transactionform_data.save(commit=False) #not to save to database yet
@@ -134,7 +135,9 @@ def add_transaction(request):
             return redirect('transaction_list')
         else:
             print('valid else tried')
-            return redirect('')
+            print(Transactionform_data.errors)
+            print(Transactionform_data.cleaned_data)
+            return redirect('add_transaction')
             
     else:
         print('else tried')
