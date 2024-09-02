@@ -52,9 +52,9 @@
 </div>
 <div class="app-body-sidebar">
     <section class="payment-section">
-        <h2>New Payment</h2>
+        <h2>Your Finances</h2>
         <div class="payment-section-header">
-            <p>Choose a card to transfer money</p>
+            <p>Click on the cards to view your finances</p>
             <div>
                 <button class="card-button mastercard">
                     <svg width="2001" height="1237" viewBox="0 0 2001 1237" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -79,15 +79,15 @@
         <div class="payments">
             <div class="payment">
                 <div class="card green">
-                    <span>01/22</span>
+                    <span>01/30</span>
                     <span>
                         •••• 4012
                     </span>
                 </div>
                 <div class="payment-details">
-                    <h3>Internet</h3>
+                    <h3>Main Account Balance</h3>
                     <div>
-                        <span>$ 2,110</span>
+                        <span> {{ total_balance }} </span>
                         <button class="icon-button">
                             <i class="ph-caret-right-bold"></i>
                         </button>
@@ -96,15 +96,15 @@
             </div>
             <div class="payment">
                 <div class="card olive">
-                    <span>12/23</span>
+                    <span>12/30</span>
                     <span>
                         •••• 2228
                     </span>
                 </div>
                 <div class="payment-details">
-                    <h3>Universal</h3>
+                    <h3>Total Income</h3>
                     <div>
-                        <span>$ 5,621</span>
+                        <span>{{ total_income }}</span>
                         <button class="icon-button">
                             <i class="ph-caret-right-bold"></i>
                         </button>
@@ -113,15 +113,15 @@
             </div>
             <div class="payment">
                 <div class="card gray">
-                    <span>03/22</span>
+                    <span>03/30</span>
                     <span>
                         •••• 5214
                     </span>
                 </div>
                 <div class="payment-details">
-                    <h3>Gold</h3>
+                    <h3>Total Expenses</h3>
                     <div>
-                        <span>$ 3,473</span>
+                        <span>{{ total_expense }}</span>
                         <button class="icon-button">
                             <i class="ph-caret-right-bold"></i>
                         </button>
@@ -133,7 +133,7 @@
             <p>Most frequently asked questions</p>
             <div>
                 <label>Question</label>
-                <input type="text" placeholder="Type here">
+                <textarea type="text" placeholder="Type here" style="background-color: transparent; color:white;"></textarea>
             </div>
         </div>
         <div class="payment-section-footer">
@@ -149,45 +149,4 @@
 </div>
 
 {% endblock %}
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>All Transactions</title>
-</head>
-<body>
-
-    
-
-    <h1>All Transactions for {{ user_name }}</h1>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Category</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-                <tr>
-                    <td>{{ transaction.date }}</td>
-                    <td>{{ transaction.get_type_display }}</td>
-                    <td>{{ transaction.category }}</td>
-                    <td>${{ transaction.amount }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No transactions found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <button><a href="{% url 'income_list' %}">Back to Income List</a></button>
-    <button><a href="{% url 'expense_list' %}">Back to Expense List</a></button>
-    <button><a href="{% url 'add_transaction' %}">Add New Transaction</a></button>
-</body>
-</html>
 

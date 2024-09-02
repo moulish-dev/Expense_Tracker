@@ -43,7 +43,12 @@ def income_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
-    return render(request, 'transactions/income_list.html',{'transactions': incomes})
+    total_income = total_income()
+    total_expense = total_expense()
+    return render(request, 'transactions/income_list.html',{
+        'transactions': incomes,
+        'total_income': total_income,
+        'total_expense': total_expense,})
 @login_required
 def expense_list(request):
     user = request.user
@@ -59,7 +64,12 @@ def expense_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
-    return render(request, 'transactions/expense_list.html', {'transactions': expenses})
+    total_income = total_income()
+    total_expense = total_expense()
+    return render(request, 'transactions/expense_list.html', {
+        'transactions': expenses,
+        'total_income': total_income,
+        'total_expense': total_expense,})
 @login_required
 def transactions_list(request):
     #shows all transactions
@@ -75,12 +85,18 @@ def transactions_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
+    total_income() == total_income
+    total_expense() == total_expense
+
     context = {'transactions': transactions}        
 
     
     return render(request, 'transactions/transaction_list.html',{
         'transactions': transactions,
-        'user_name': user.username})
+        'user_name': user.username,
+        'total_income': total_income,
+        'total_expense': total_expense,
+        })
 
 @login_required
 def add_statement(request):
@@ -332,6 +348,29 @@ def custom_logout_view(request):
     return render(request, 'registration/logout.html')
 
 #USER AUTHENTICATION FUNCTIONS END
+def total_income(request):
+    user = request.user
+    transactions = Transaction.objects.filter(user=user).order_by('-date')
+    total_income = 0
+    for transaction in transactions:
+        if transaction.type=='income' or transaction.type == 'Income':
+            total_income += transaction.amount
+        else:
+            total_income = 'e'
+
+    return total_income
+
+def total_expense(request):
+    user = request.user
+    transactions = Transaction.objects.filter(user=user).order_by('-date')
+    total_expense = 0
+    for transaction in transactions:
+        if transaction.type=='expense' or transaction.type == 'Expense':
+            total_expense += transaction.amount
+        else:
+            total_expense = 'e'
+
+    return total_expense
 
 #USER PROFILE PAGE FUNCTIONS START
 @login_required
