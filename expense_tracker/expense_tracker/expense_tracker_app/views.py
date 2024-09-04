@@ -19,7 +19,9 @@ from pypdf import PdfReader
 import re #for regex text processing
 from datetime import datetime
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q, Sum
+from .utils import FinancialSummary
+from django.db.models.functions import TruncMonth
 
 
 #HTML PAGES VIEW FUNCTIONS START
@@ -27,10 +29,12 @@ def home(request):
     
     return render(request, './home.html')
 #HTML PAGES VIEW FUNCTIONS END
+
 #TRANSACTION FUNCTIONS START
 @login_required
 def income_list(request):
     user = request.user
+    summary = FinancialSummary(user)
     #filters transactions to show only income
     incomes = Transaction.objects.filter(Q(type='income') | Q(type='Income'), user=user).order_by('date')
     for transaction in incomes: 
@@ -43,12 +47,13 @@ def income_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
-    total_income = total_income()
-    total_expense = total_expense()
+    
     return render(request, 'transactions/income_list.html',{
         'transactions': incomes,
-        'total_income': total_income,
-        'total_expense': total_expense,})
+        'total_income': summary.total_income(),
+        'total_expense': summary.total_expense(),
+        'total_balance': summary.net_balance(),
+        })
 @login_required
 def expense_list(request):
     user = request.user
@@ -64,12 +69,13 @@ def expense_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
-    total_income = total_income()
-    total_expense = total_expense()
+    summary = FinancialSummary(user)
     return render(request, 'transactions/expense_list.html', {
         'transactions': expenses,
-        'total_income': total_income,
-        'total_expense': total_expense,})
+        'total_income': summary.total_income(),
+        'total_expense': summary.total_expense(),
+        'total_balance': summary.net_balance(),
+        })
 @login_required
 def transactions_list(request):
     #shows all transactions
@@ -85,17 +91,14 @@ def transactions_list(request):
             else:
                 transaction.symbol = 'E'
                 transaction.image = ''
-    total_income() == total_income
-    total_expense() == total_expense
+    summary = FinancialSummary(user)
 
-    context = {'transactions': transactions}        
-
-    
     return render(request, 'transactions/transaction_list.html',{
         'transactions': transactions,
         'user_name': user.username,
-        'total_income': total_income,
-        'total_expense': total_expense,
+        'total_income': summary.total_income(),
+        'total_expense': summary.total_expense(),
+        'total_balance': summary.net_balance(),
         })
 
 @login_required
@@ -158,8 +161,14 @@ def add_transaction(request):
     else:
         print('else tried')
         Transactionform_data = TransactionForm()
+    
+    summary = FinancialSummary(request.user)
     return render(request, 'transactions/add_transaction.html', {
-        'transaction_form': Transactionform_data        })
+        'transaction_form': Transactionform_data,
+        'total_income': summary.total_income(),
+        'total_expense': summary.total_expense(),
+        'total_balance': summary.net_balance(),
+        })
 #TRANSACTION FUNCTIONS END
 
  
@@ -348,29 +357,6 @@ def custom_logout_view(request):
     return render(request, 'registration/logout.html')
 
 #USER AUTHENTICATION FUNCTIONS END
-def total_income(request):
-    user = request.user
-    transactions = Transaction.objects.filter(user=user).order_by('-date')
-    total_income = 0
-    for transaction in transactions:
-        if transaction.type=='income' or transaction.type == 'Income':
-            total_income += transaction.amount
-        else:
-            total_income = 'e'
-
-    return total_income
-
-def total_expense(request):
-    user = request.user
-    transactions = Transaction.objects.filter(user=user).order_by('-date')
-    total_expense = 0
-    for transaction in transactions:
-        if transaction.type=='expense' or transaction.type == 'Expense':
-            total_expense += transaction.amount
-        else:
-            total_expense = 'e'
-
-    return total_expense
 
 #USER PROFILE PAGE FUNCTIONS START
 @login_required
@@ -432,6 +418,23 @@ def contactForm(request):
 def user_help(request):
     return render(request, 'User/user_helppage.html')
 
-
+def reports(request):
+    user=request.user
+    summary = FinancialSummary(user)
+    monthly_expenses = (Transaction.objects
+                        .filter(user=user,type__iexact='expense')
+                        .annotate(month=TruncMonth('date'))
+                        .values('month')
+                        .annotate(total=Sum('amount'))
+                        .order_by('month'))
+    monthly_expenses_labels = [entry['month'].strftime(' %B %Y') for entry in monthly_expenses]
+    monthly_expenses_data = [float(entry['total']) for entry in monthly_expenses]
+    return render(request, 'transactions/reports.html',{
+        'total_income':summary.total_income(),
+        'total_expense':summary.total_expense(),
+        'total_balance':summary.net_balance(),
+        'monthly_expenses_labels':monthly_expenses_labels,
+        'monthly_expenses_data': monthly_expenses_data,
+        })
 #USER PROFILE PAGE FUNCTIONS END
 

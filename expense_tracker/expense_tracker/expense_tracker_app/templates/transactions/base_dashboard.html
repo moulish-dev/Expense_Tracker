@@ -52,6 +52,9 @@
                         <a href="{% url 'expense_list' %}">
                             Expenses
                         </a>
+                        <a href="{% url 'reports' %}">
+                            Reports
+                        </a>
                     </div>
                 </div>
                 <div class="app-header-actions">
@@ -87,7 +90,7 @@
                             <i class="ph-swap"></i>
                             <span>Transactions</span>
                         </a>
-                        <a href="#">
+                        <a href="{% url "reports" %}">
                             <i class="ph-file-text"></i>
                             <span>Reports</span>
                         </a>

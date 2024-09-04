@@ -1,21 +1,23 @@
 from .models import Transaction
+from django.db.models import Q
 
 class FinancialSummary:
     def __init__(self,user):
         self.user = user
 
     def total_income(self):
-        sum = (transaction.amount for transaction in Transaction.objects.filter(user=self.user,type='income',type='Income'))
+        sum_income = sum(transaction.amount for transaction in Transaction.objects.filter(type__iexact = 'income', user=self.user ))
 
-        return sum
+        return sum_income
     
     def total_expense(self):
-        sum = (transaction.amount for transaction in Transaction.objects.filter(user=self.user,type='expense',type='Expense'))
+        sum_expense = sum(transaction.amount for transaction in Transaction.objects.filter(type__iexact='expense', user=self.user))
 
-        return sum
+        return sum_expense
     
     def net_balance(self):
-        sum = self.total_income() - self.total_expense()
-
-        return sum
+        income = self.total_income()
+        expense = self.total_expense()
+        sum_balance = income - expense  
+        return sum_balance
             

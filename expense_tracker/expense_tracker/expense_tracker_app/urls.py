@@ -18,5 +18,6 @@ urlpatterns = [
     path('add_statement_transaction/', views.add_statement_transaction, name='add_statement_transaction'),
     path('contact-form/', views.contactForm, name='contact-form'),
     path('add_statement/',views.add_statement, name='add_statement_form'),
-    path('help/',views.user_help,name='help')
+    path('help/',views.user_help,name='help'),
+    path('reports/',views.reports,name='reports')
     ]
