@@ -22,12 +22,15 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q, Sum
 from .utils import FinancialSummary
 from django.db.models.functions import TruncMonth
+import os
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 #HTML PAGES VIEW FUNCTIONS START
 def home(request):
     
-    return render(request, './home.html')
+    return render(request, 'public/main.html')
 #HTML PAGES VIEW FUNCTIONS END
 
 #TRANSACTION FUNCTIONS START
@@ -117,26 +120,36 @@ def add_statement(request):
             BankStmt_file = request.FILES["file_bankstmt"]
             BankStmt_filename = BankStmt_file.name
             file_ext = pathlib.Path(BankStmt_filename).suffix
+            BankStmt_file_path = default_storage.save(BankStmt_filename, ContentFile(BankStmt_file.read()))
             #Extracting data from bank statement
             #changing according to file
-            if file_ext == '.pdf':
-                print('Bank Statement pdf view accessed')
-                pdf_data_list = extract_transactions_from_pdf(request.FILES["file_bankstmt"])
-                request.session['statement_transactions'] = pdf_data_list
-                print(pdf_data_list)
-                return render(request, 'transactions/confirm_transactions.html',{'pdf_transactions': pdf_data_list})
-            elif file_ext == '.xlsx':
-                extract_transactions_from_xlsx(BankStmt.file) 
-                return redirect('transaction_list')
+            try:
+                if file_ext == '.pdf':
+                    print('Bank Statement pdf view accessed')
+                    pdf_data_list = extract_transactions_from_pdf(request.FILES["file_bankstmt"])
+                    request.session['statement_transactions'] = pdf_data_list
+                    print(pdf_data_list)
+                    return render(request, 'transactions/confirm_transactions.html',{'pdf_transactions': pdf_data_list})
+                elif file_ext == '.xlsx':
+                    extract_transactions_from_xlsx(BankStmt.file) 
+                    return redirect('transaction_list')
+            finally:
+                #deletes the uploaded file 
+                if os.path.exists(BankStmt_file_path):
+                    os.remove(BankStmt_file_path)
         else:
             print(BankStatementform_data.errors)
             
     else:
         print('else tried')
         BankStatementform_data = BankStatementForm()
+
     return render(request, 'transactions/add_statement_transaction.html', {
         'bank_statement_form' : BankStatementform_data
         })
+
+
+
 
 @login_required
 def add_transaction(request):
@@ -313,7 +326,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('transaction_list')
+            return redirect('dashboard')
         else:
             return render(request, 'registration/register.html', {'form': form})  # Re-render the form with errors
     else:
@@ -343,7 +356,7 @@ def custom_login_view(request):
         
         if user is not None:
             auth_login(request, user)
-            return redirect('transaction_list')
+            return redirect('dashboard')
         else:
             print("Login failed. Re-rendering login form.")
             form = AuthenticationForm()
@@ -437,4 +450,6 @@ def reports(request):
         'monthly_expenses_data': monthly_expenses_data,
         })
 #USER PROFILE PAGE FUNCTIONS END
+def redirect_to_homepage(request):
+    return redirect('home')
 
