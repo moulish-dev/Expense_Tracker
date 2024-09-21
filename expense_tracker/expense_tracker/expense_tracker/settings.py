@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-kdzd(s0hb)imy#b1zb*f!lyfq^i9_a@_1_(sk)v0^ms8#7hb92'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -132,11 +132,11 @@ LOGOUT_REDIRECT_URL = 'logout'
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'expense_tracker_app\static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'expense_tracker_app/static')]
 # For storing static files
 #STATICFILES_DIRS = [BASE_DIR / "/static/"]
 
 #for scss files in static folder
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'expense_tracker_app\static')
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'expense_tracker_app/static')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
