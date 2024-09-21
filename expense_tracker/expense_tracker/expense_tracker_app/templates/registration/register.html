@@ -85,7 +85,7 @@
                     <a class="white" href="{% url "login" %}">Log In</a></p> 
                     <!-- Sign Up Form -->
                     <div class="form-container">
-                        <form id="signUpForm" data-toggle="validator" data-focus="false" method="POST" >
+                        <form id="signUpForm" data-toggle="validator" data-focus="false" method="POST"  >
                             {% csrf_token %}
                             <div class="form-group">
                                 <input type="email" class="form-control-input" id="semail" name="email" required>
