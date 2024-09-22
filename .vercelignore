@@ -1,0 +1,4 @@
+#Ignore git repository files
+.git/
+EXPENSE TRACKER.docx
+
