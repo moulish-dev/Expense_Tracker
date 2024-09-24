@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-kdzd(s0hb)imy#b1zb*f!lyfq^i9_a@_1_(sk)v0^ms8#7hb92
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://expense-tracker-ikp22kz8n-moulish-devs-projects.vercel.app/','127.0.0.1']
+ALLOWED_HOSTS = ['.vercel.app','127.0.0.1']
 
 
 # Application definition
@@ -118,7 +118,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'expense_tracker_app/static'),  # Adjust this path
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -127,14 +131,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #to redirect users back to login page if user try to access protected view
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = ''
+LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'logout'
 
-STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'expense_tracker_app/static')]
-# For storing static files
-#STATICFILES_DIRS = [BASE_DIR / "/static/"]
+
 
 #for scss files in static folder
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'expense_tracker_app/static')
