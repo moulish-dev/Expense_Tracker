@@ -8,7 +8,7 @@
     ],
     "routes": [
         {
-            "src": "./expense_tracker_app/static/(.*)",
+            "src": "/static/(.*)",
             "dest": "./expense_tracker_app/static/$1"
         },
         {
