@@ -12,8 +12,8 @@ import sys
 
 from django.core.wsgi import get_wsgi_application
 
-print("Current working directory:", os.getcwd())
-print("Python Path:", sys.path)
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))  # This should point to the directory of the second expense_tracker
+
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'expense_tracker.settings')
 

@@ -9,5 +9,10 @@
             "src": "/(.*)",
             "dest": "expense_tracker/expense_tracker/expense_tracker/wsgi.py"
         }
-    ]
+    ],
+    "build":{
+        "env":{
+            "PYTHONPATH":"expense_tracker/expense_tracker"
+        }
+    }
 }
