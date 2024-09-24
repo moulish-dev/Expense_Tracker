@@ -2,3 +2,8 @@
 .git/
 EXPENSE TRACKER.docx
 
+#Ignore virtual environment files
+expense_tracker/Include
+expense_tracker/Lib
+expense_tracker/Scripts
+expense_tracker/pyvenv.cfg
