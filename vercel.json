@@ -7,7 +7,10 @@
         }
     ],
     "routes": [
-        
+        {
+            "src": "/static/(.*)",
+            "dest": "/staticfiles/$1"
+        },
         {
             "src": "/(.*)",
             "dest": "expense_tracker/wsgi.py"
