@@ -20,7 +20,7 @@
 	 line-height: 1.5;
 	 min-height: 100vh;
 	 font-family: "Be Vietnam Pro", sans-serif;
-	 background-color: var(--c-gray-900);
+	 background-color: var(--c-gray-800); /*Changing to the app background color*/
 	 color: var(--c-text-primary);
 	 display: flex;
 	 padding-top: 0vw; /*changed from 3 to 0 */
@@ -51,7 +51,7 @@
 	 width: 95%;
 	 max-width: 1600px;
 	 background-color: var(--c-gray-800);
-	 padding: 4vw 6vw;
+	 padding: 1vw 1.5vw;
 	 display: flex;
 	 flex-direction: column;
 }
@@ -105,7 +105,7 @@
         display: grid;
         grid-template-columns: minmax(min-content, 175px) minmax(max-content, 1fr) minmax(min-content, 400px);
         column-gap: 4rem;
-        padding-top: 2.5rem;
+        padding-top: 1.25rem;
     }
 
     
@@ -594,6 +594,7 @@
 	 align-items: center;
 	 justify-content: space-between;
 	 flex: 1;
+	 padding:1%;
 }
  @media (max-width: 1000px) {
 	 .transfer-details {

@@ -8,7 +8,12 @@
     
     <section class="transfer-section">
         <div class="transfer-section-header">
-            <h2>Latest transactions</h2>
+            <h2>Latest transactions</h2>({{ pdf_transactions|length }} Transactions)
+            <br> 
+            <form method="POST" action=" {% url "add_statement_transaction" %} ">
+                {% csrf_token %}
+                <button type="submit"> Add All Transactions </button>
+            </form> 
             <div class="filter-options">
                 <p></p>
                 <button class="icon-button">
@@ -18,11 +23,15 @@
                     <i class="ph-plus"></i>
                 </button>
             </div>
-        </div>
+        </div>      
         <div class="transfers">
-            
-            
-            
+            <div class='transfer-details'>
+                <div><dd style='color: gray;'>Date</dd></div>
+                <div><dd style='color: gray;'>Description</dd></div>
+                <div><dd style='color: gray;'>Amount</dd></div>
+                <div><dd style='color: gray;'>Type</dd></div>
+                <div><dd style='color: gray;'>Remove</dd></div>
+            </div>
             {% for transaction in pdf_transactions %}
             <form method="POST" action="{% url 'remove_transaction' %}">
                 {% csrf_token %}
@@ -30,22 +39,25 @@
                 <input type="hidden" value={{ forloop.counter0 }} name="transaction_index">
                 <div class="transfer-details">
                     <div>
-                        <dt>{{ transaction.Date }}</dt>
-                        <dd>Date Payment</dd>
+                        {{ transaction.Date }}</dt>
+                        
                     </div>
                     <div>
                         <dt>{{ transaction.Description }}</dt>
-                        <dd>Merchant Name</dd>
+                        
                     </div>
-                <div class="transfer-number">
-                     {{ transaction.Amount_symbol }}  {{ transaction.Amount }}
+                    <div >
+                        {{ transaction.Amount_symbol }}  {{ transaction.Amount }}
+                    </div>
+                    <div>
+                        {{ transaction.Type }}
+                    </div>
+                    <div>
+                        <dt><button type="submit" name="remove"  > 
+                            Remove </button></dt>
+                    </div>
                 </div>
-                <div>
-                    <dt><button type="submit" name="remove"  > 
-                        Remove </button></dt>
-                    <dd></dd>
-                </div>
-            </div>
+                <br>
             </div>
         </form>
             {% empty %}

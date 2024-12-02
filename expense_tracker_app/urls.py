@@ -21,5 +21,6 @@ urlpatterns = [
     path('add_statement/',views.add_statement, name='add_statement_form'),
     path('help/',views.user_help,name='help'),
     path('reports/',views.reports,name='reports'),
+    path('forecast_transactions/', views.forecast_transactions, name='forecast_transactions'),
     path('generate_statement',views.generate_statement,name='generate_statement')
     ]

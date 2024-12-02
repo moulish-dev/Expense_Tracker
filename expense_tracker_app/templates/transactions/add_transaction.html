@@ -3,9 +3,6 @@
 {% block title %} Add Transaction {% endblock %}
 
 {% block css %}
-
-
-
 {% endblock  %}
 
 {% block content %}
@@ -154,7 +151,7 @@
                     </div>
                     <div class="mb-3 border border-5" style="border-color: white; color: white;">
                         <input type="number" class="form-control bg-dark text-light" placeholder="Amount" 
-                        name="amount" style="border: solid !important; border-color: white !important;" required>
+                        name="amount" step="0.01" style="border: solid !important; border-color: white !important;" required>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -185,9 +182,9 @@
                         <button type="submit" class="btn btn-primary mt-3">Submit </button>
                 </div>
             </form>
-            
-            <button onclick="window.location.href='{% url "add_statement_form" %}'" >Add Bank Statement</button>
-            <h5>Add your transactions from your bank statemnet from here</h5>`;
+            <br>
+            <h5>Add your transactions by uploading files from here</h5>
+            <button onclick="window.location.href='{% url "add_statement_form" %}'" >Add Bank Statement</button>`;
         }
     }
     customElements.define('transaction-form', TransactionForm);

@@ -2,34 +2,43 @@
 
 {% block title %} Generate Statement {% endblock  %}
 
-
 {% block css %}
 
+<style>
+    .chart-container {
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
+    canvas {
+        max-width: 100%;
+    }
+</style>
 
-{% endblock %}
+{% endblock  %}
 
 {% block content %}
 
 <div>
-    <h1>Generate Statements</h1>
-
-<h4>Get transactions from dates you want :</h4>
-<form action="{% url 'generate_statement' %}" method="post">
-    {% csrf_token %}
+    <h1>Transaction Forecast</h1>
     
-    <input type="date" name="from_generate" placeholder="From Date">
-    <br>
-    <input type="date" name="to_generate" placeholder="To Date">
-    <br>
-    <label for="filetype">Select the File Type you need:</label>
-    <select name="filetype" required>
-        <option value="excel">CSV/Excel</option>
-        <option value="pdf">PDF</option>
-    </select>
-    <br>
-    <button type="submit">Download Statement</button>
-</form>
+    <!-- Daily Forecast Chart -->
+    <div class="chart-container">
+        <h2>Daily Forecast</h2>
+        <canvas id="dailyForecastChart" width="600" height="400"></canvas>
+    </div>
+
+    <!-- Weekly Forecast Chart -->
+    <div class="chart-container">
+        <h2>Weekly Forecast</h2>
+        <canvas id="weeklyForecastChart" width="600" height="400"></canvas>
+    </div>
+
+    <!-- Monthly Forecast Chart -->
+    <div class="chart-container">
+        <h2>Monthly Forecast</h2>
+        <canvas id="monthlyForecastChart" width="600" height="400"></canvas>
+    </div>
 </div>
 
 <div class="app-body-sidebar">
@@ -129,5 +138,72 @@
         </div>
     </section>
 </div>
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const forecasts = {{ forecasts|safe }};
+            
+            if (forecasts.daily && !forecasts.daily.error) {
+                const ctxDaily = document.getElementById('dailyForecastChart').getContext('2d');
+                new Chart(ctxDaily, {
+                    type: 'line',
+                    data: {
+                        labels: forecasts.daily.labels,
+                        datasets: [{
+                            label: 'Daily Forecast',
+                            data: forecasts.daily.data,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    }
+                });
+            }
+
+            if (forecasts.weekly && !forecasts.weekly.error) {
+                const ctxWeekly = document.getElementById('weeklyForecastChart').getContext('2d');
+                new Chart(ctxWeekly, {
+                    type: 'line',
+                    data: {
+                        labels: forecasts.weekly.labels,
+                        datasets: [{
+                            label: 'Weekly Forecast',
+                            data: forecasts.weekly.data,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    }
+                });
+            }
+
+            if (forecasts.monthly && !forecasts.monthly.error) {
+                const ctxMonthly = document.getElementById('monthlyForecastChart').getContext('2d');
+                new Chart(ctxMonthly, {
+                    type: 'line',
+                    data: {
+                        labels: forecasts.monthly.labels,
+                        datasets: [{
+                            label: 'Monthly Forecast',
+                            data: forecasts.monthly.data,
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    }
+                });
+            }
+        });
+    </script>
+
+<canvas id="dailyForecastChart" width="400" height="200"></canvas>
+<canvas id="weeklyForecastChart" width="400" height="200"></canvas>
+<canvas id="monthlyForecastChart" width="400" height="200"></canvas>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 
 {% endblock  %}

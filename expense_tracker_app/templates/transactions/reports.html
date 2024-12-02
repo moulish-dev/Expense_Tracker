@@ -3,19 +3,22 @@
 {% block title %} Reports Transaction {% endblock  %}
 
 {% block css %}
+<style>
 
 
+</style>
 
 {% endblock  %}
 
 {% block content %}
 <div>
     <div>
-        <canvas id = 'incomeExpense-chart' > </canvas> 
-    </div>  
-    <div>
-        <canvas id = 'monthlyExpense-chart' > </canvas> 
+        <canvas id = 'monthlyExpense-chart' style='height:50vw;'> </canvas> 
     </div>
+    <div>
+        <canvas id ='incomeExpense-chart' > </canvas> 
+    </div>  
+    
 </div>
 <div class="app-body-sidebar">
     <section class="payment-section">
@@ -143,31 +146,82 @@
     })
 
     {% comment %} Bar Chart Monthly {% endcomment %}
-    var bcme = document.getElementById('monthlyExpense-chart').getContext('2d')
+    
+    var bcme = document.getElementById('monthlyExpense-chart').getContext('2d');
     var monthlyExpenseChart = new Chart(bcme, {
-        type: 'bar',
-        data: {
-            labels: {{ monthly_expenses_labels|safe }},
-            datasets: [{
-                data: {{ monthly_expenses_data|safe }},
-                backgroundColor: '#422CCD',
-                hoverBackgroundColor: '#ee102b'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
+    type: 'bar',
+    data: {
+        labels: {{ monthly_expenses_labels|safe }},
+        datasets: [{
+            label: 'Monthly Expenses',
+            data: {{ monthly_expenses_data|safe }},
+            backgroundColor: [
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)',
+                'rgba(255, 159, 64, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(255, 206, 86, 0.6)'
+            ],
+            hoverBackgroundColor: 'rgba(255, 99, 132, 0.9)',
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+                labels: {
+                    font: {
+                        size: 14
+                    }
                 }
             },
-            
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return '£' + context.parsed.y;
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: 'Month',
+                    font: {
+                        size: 16
+                    }
+                }
+            },
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Expense Amount (£)',
+                    font: {
+                        size: 16
+                    }
+                },
+                ticks: {
+                    callback: function(value) {
+                        return '£' + value;
+                    }
+                }
+            }
         }
-    }) 
+    }
+});
+
 </script>
 
 {% endblock  %}
