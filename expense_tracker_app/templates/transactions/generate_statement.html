@@ -17,9 +17,10 @@
 <h4>Get transactions from dates you want :</h4>
 <form action="{% url 'generate_statement' %}" method="post">
     {% csrf_token %}
-    
+    <label for="from_generate">From Date: </label>
     <input type="date" name="from_generate" placeholder="From Date">
     <br>
+    <label for="to_generate">To Date: </label>
     <input type="date" name="to_generate" placeholder="To Date">
     <br>
     <label for="filetype">Select the File Type you need:</label>
@@ -130,4 +131,18 @@
     </section>
 </div>
 
+{% if file_content %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Create an anchor element and trigger download
+            const link = document.createElement('a');
+            link.href = 'data:application/octet-stream;base64,{{ file_content }}';
+            link.download = '{{ file_name }}';
+            link.click();
+        });
+    </script>
+{% endif %}
+
+
 {% endblock  %}
+

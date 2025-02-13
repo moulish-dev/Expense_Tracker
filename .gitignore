@@ -1,3 +1,8 @@
 .vercel
 .env
 .gitignore
+**/__pycache__/
+*.pyc
+*.pyo
+expense_tracker/__pycache__
+expense_tracker_app/__pycache__

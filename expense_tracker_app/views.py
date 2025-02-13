@@ -260,6 +260,14 @@ def extract_transactions_from_pdf(pdf_file):
                 'Amount': amount,
                 'Amount_symbol': symbol,
             })
+            if amount_type != 'error' and amount != 'error':
+                transactions.append({
+                    'Date': date,
+                    'Description': description,
+                    'Type': amount_type,
+                    'Amount': amount,
+                    'Amount_symbol': symbol,
+                })
     return transactions
     
 def remove_transactions(request):
@@ -466,9 +474,9 @@ def redirect_to_homepage(request):
 
 def generate_statement(request):
     if request.method == 'POST':
-        from_date = request.POST.get('from_date')
-        to_date = request.POST.get('to_date')
-        file_type = request.POST.get('file_type')
+        from_date = request.POST.get('from_generate')
+        to_date = request.POST.get('to_generate')
+        file_type = request.POST.get('filetype')
         
         # parsing all dates into one using parse_date() function
         try:
@@ -484,44 +492,43 @@ def generate_statement(request):
         ).values('date', 'merchant', 'type', 'amount', 'category', 'status')
         
         if file_type == 'excel':
-            # Generate Excel file
+            # converting the requested transactions
             df = pd.DataFrame(list(requested_transactions))
 
-            # Create an in-memory buffer
+            
             buffer = io.BytesIO()
             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
                 df.to_excel(writer, sheet_name='Financial Statement', index=False)
 
-            # Get the base64-encoded file content
+            # saving the encoded file content
             buffer.seek(0)
             file_content = base64.b64encode(buffer.read()).decode()
 
-            # Prepare the context for HTML rendering
+            # bundling excel file
             context = {
                 'file_type': 'excel',
                 'file_content': file_content,
-                'file_name': 'financial_statement.xlsx'
+                'file_name': 'quanta_excel_statement.xlsx'
             }
-
+            
             return render(request, 'transactions/generate_statement.html', context)
 
         elif file_type == 'pdf':
-            # Generate PDF file
             buffer = io.BytesIO()
             p = canvas.Canvas(buffer)
 
-            # Title
+            # title of the document in the file
             p.setFont("Helvetica-Bold", 16)
             p.drawString(100, 800, f"Financial Statement: {from_date} to {to_date}")
 
-            # Create table-like headers
+            # setting table-like headers for the transactions
             p.setFont("Helvetica-Bold", 12)
             p.drawString(50, 770, "Date")
             p.drawString(150, 770, "Merchant")
             p.drawString(300, 770, "Type")
             p.drawString(400, 770, "Amount")
 
-            # Loop through transactions
+            # Looping through all transactions
             y = 750
             p.setFont("Helvetica", 10)
             for transaction in requested_transactions:
@@ -531,7 +538,7 @@ def generate_statement(request):
                 p.drawString(400, y, f"{transaction['amount']:.2f}")
                 y -= 20
 
-                # Page breaking mechanism
+                
                 if y < 50:
                     p.showPage()
                     p.setFont("Helvetica", 10)
@@ -544,11 +551,11 @@ def generate_statement(request):
             # Get the base64-encoded file content
             file_content = base64.b64encode(buffer.read()).decode()
 
-            # Prepare the context for HTML rendering
+            # bundling all the file content and with file name and file
             context = {
                 'file_type': 'pdf',
                 'file_content': file_content,
-                'file_name': 'financial_statement.pdf'
+                'file_name': 'quanta_statement.pdf'
             }
 
             return render(request, 'transactions/generate_statement.html', context)
@@ -613,7 +620,7 @@ def forecast_transactions(request):
     monthly_df = data_df.resample('M').sum()
     
     try:
-        model = ARIMA(daily_df['amount'], order=(1, 1, 1))
+        model = ARIMA(daily_df['amount'], order=(7, 1, 1))
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=10)
         daily_forecast = {
@@ -624,7 +631,7 @@ def forecast_transactions(request):
         daily_forecast = {'error': str(e)}
 
     try:
-        model = ARIMA(weekly_df['amount'], order=(1, 1, 1))
+        model = ARIMA(weekly_df['amount'], order=(7, 1, 1))
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=10)
         weekly_forecast = {
@@ -635,7 +642,7 @@ def forecast_transactions(request):
         weekly_forecast = {'error': str(e)}
 
     try:
-        model = ARIMA(monthly_df['amount'], order=(1, 1, 1))
+        model = ARIMA(monthly_df['amount'], order=(7, 1, 1))
         model_fit = model.fit()
         forecast = model_fit.forecast(steps=10)
         monthly_forecast = {
