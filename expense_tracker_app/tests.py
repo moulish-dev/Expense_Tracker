@@ -23,37 +23,37 @@ import os
     ("29/Nov/2024", datetime(2024, 11, 29)),
 ])
 def test_parse_date_valid_formats(date_str, expected_date):
-    # Test that valid date formats are parsed correctly
+    
     parsed_date = parse_date(date_str)
     assert parsed_date == expected_date
 
 
 @pytest.mark.parametrize("invalid_date_str", [
-    "11/29/2024",  # Invalid format MM/DD/YYYY
-    "2024/11/29",  # Invalid separator
-    "29.11.2024",  # Unsupported separator
-    "Nov 29 2024", # Unsupported format
-    "2024-29-11",  # Incorrect order
+    "11/29/2024",  
+    "2024/11/29",  
+    "29.11.2024",  
+    "Nov 29 2024", 
+    "2024-29-11",  
 ])
 def test_parse_date_invalid_formats(invalid_date_str):
-    # Test that invalid date formats raise a ValidationError
+    
     with pytest.raises(ValidationError):
         parse_date(invalid_date_str)
 
 
 def test_parse_date_empty_string():
-    # Test that an empty string raises a ValidationError
+    
     with pytest.raises(ValidationError):
         parse_date("")
 
 
 def test_parse_date_none():
-    # Test that None raises a ValidationError
+    
     with pytest.raises(ValidationError):
         parse_date(None)
 
 
-# Bank Statement Extraction Tests
+
 def test_extract_transactions_from_csv():
     csv_content = """Transaction Date,Transaction Description,Debit Amount,Credit Amount
     29/11/2024,Test Merchant,100.0,
@@ -71,7 +71,7 @@ def test_extract_transactions_from_pdf():
     with open(pdf_path, "rb") as pdf_file:
         transactions = extract_transactions_from_pdf(pdf_file)
         assert isinstance(transactions, list)
-        # Add assertions based on the known content of the test PDF
+        F
 
 
 def test_extract_transactions_from_xlsx():
@@ -79,7 +79,7 @@ def test_extract_transactions_from_xlsx():
     with open(xlsx_path, "rb") as xlsx_file:
         transactions = extract_transactions_from_xlsx(xlsx_file)
         assert isinstance(transactions, list)
-        # Add assertions based on the known content of the test XLSX
+        
 
 
 # Transaction Handling Tests@pytest.mark.django_db

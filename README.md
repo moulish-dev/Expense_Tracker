@@ -2,7 +2,7 @@
 # Expense Tracker
 
 ![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Build Status](https://img.shields.io/github/actions/workflow/status/your-username/expense-tracker/ci.yml)
+
 
 ## Description
 
